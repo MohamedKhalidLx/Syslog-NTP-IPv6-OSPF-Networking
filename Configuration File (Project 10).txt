@@ -1,0 +1,271 @@
+-------R1-------
+<Change Hostname>
+enable
+configure terminal
+hostname R1
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 123
+
+<Activate IPv6>
+configure terminal
+ipv6 unicast-routing
+
+<Configure interface IP addresses>
+interface S0/1/0
+ip address 10.1.1.1 255.255.255.252
+ipv6 address 2000:1A:1B:30::1/64
+no shutdown
+interface G0/0/1
+ip address 192.168.1.1 255.255.255.0
+ipv6 address 2000:1A:1B:20::1/64
+no shutdown
+exit
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+
+<Warning Message>
+banner motd $Unauthorized access strictly prohibited! R1$
+
+<Configure Domain Name, RSA encryption>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Encrypt all passwords>
+service password-encryption
+
+---Configure OSPFv2 (IPv4)-----
+router ospf 1
+passive-interface G0/0/1			<stops both outgoing and incoming routing updates>
+network 192.168.1.0 0.0.0.255 area 0
+network 10.1.1.0 0.0.0.3 area 0
+exit
+
+----OSPFv2 MD5 Authentication----
+enable
+configure terminal
+router ospf 1
+area 0 authentication message-digest
+exit
+interface S0/1/0
+ip ospf message-digest-key 1 md5 cisco123
+exit
+
+<Configure R1 NTP clients>
+ntp server 192.168.1.5
+ntp update-calendar    			<Configure routers to update hardware clock>
+
+<Configure NTP authentication on R1>
+ntp authenticate
+ntp trusted-key 1
+ntp authentication-key 1 md5 NTPpa55
+
+<Configure routers to timestamp log messages>
+service timestamps log datetime msec
+
+<Configure Syslog Server on R1>
+logging host 192.168.1.6
+logging on
+
+----Configure OSPFv3 (IPv6)-----
+enable
+configure terminal
+router ospf 2
+interface S0/1/0
+ipv6 ospf 2 area 0
+exit
+interface G0/0/1
+ipv6 ospf 2 area 0
+exit
+
+-------R2-------
+<Change Hostname>
+enable
+configure terminal
+hostname R2
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 123
+
+<Activate IPv6>
+configure terminal
+ipv6 unicast-routing
+
+<Configure interface IP addresses>
+interface S0/1/0
+ip address 10.1.1.2 255.255.255.252
+ipv6 address 2000:1A:1B:30::2/64
+no shutdown
+interface S0/1/1
+ip address 10.2.2.2 255.255.255.252
+ipv6 address 2000:1A:1B:40::2/64
+no shutdown
+exit
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+
+<Warning Message>
+banner motd $Unauthorized access strictly prohibited! R2$
+
+<Configure Domain Name, RSA encryption>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Encrypt all passwords>
+service password-encryption
+
+---Configure OSPFv2 (IPv4)-----
+router ospf 1
+network 10.2.2.0 0.0.0.3 area 0
+network 10.1.1.0 0.0.0.3 area 0
+exit
+
+----OSPF MD5 Authentication----
+enable
+configure terminal
+router ospf 1
+area 0 authentication message-digest
+exit
+interface S0/1/0
+ip ospf message-digest-key 1 md5 cisco123
+exit
+interface S0/1/1
+ip ospf message-digest-key 1 md5 cisco123
+exit
+
+<Configure R2 NTP clients>
+ntp server 192.168.1.5
+ntp update-calendar    <Configure routers to update hardware clock>
+
+<Configure NTP authentication on R2>
+ntp authenticate
+ntp trusted-key 1
+ntp authentication-key 1 md5 NTPpa55
+
+<Configure routers to timestamp log messages>
+service timestamps log datetime msec
+
+<Configure Syslog Server on R2>
+logging host 192.168.1.6
+logging on
+
+----Configure OSPFv3 (IPv6)-----
+enable
+configure terminal
+router ospf 2
+interface S0/1/0
+ipv6 ospf 2 area 0
+exit
+interface S0/1/1
+ipv6 ospf 2 area 0
+exit
+
+-------R3-------
+<Change Hostname>
+enable
+configure terminal
+hostname R3
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 123
+
+<Activate IPv6>
+configure terminal
+ipv6 unicast-routing
+
+<Configure interface IP addresses>
+interface S0/1/0
+ip address 10.2.2.1 255.255.255.252
+ipv6 address 2000:1A:1B:40::1/64
+no shutdown
+interface G0/0/1
+ip address 192.168.3.1 255.255.255.0
+ipv6 address 2000:1A:1B:10::1/64
+no shutdown
+exit
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+
+<Warning Message>
+banner motd $Unauthorized access strictly prohibited! R3$
+
+<Configure Domain Name, RSA encryption>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Encrypt all passwords>
+service password-encryption
+
+---Configure OSPFv2 (IPv4)-----
+router ospf 1
+passive-interface G0/0/1		<stops both outgoing and incoming routing updates>
+network 192.168.3.0 0.0.0.255 area 0
+network 10.2.2.0 0.0.0.3 area 0
+exit
+
+----OSPF MD5 Authentication----
+enable
+configure terminal
+router ospf 1
+area 0 authentication message-digest
+exit
+interface S0/1/0
+ip ospf message-digest-key 1 md5 cisco123
+exit
+
+<Configure R3 NTP clients>
+ntp server 192.168.1.5
+ntp update-calendar    <Configure routers to update hardware clock>
+
+<Configure NTP authentication on R3>
+ntp authenticate
+ntp trusted-key 1
+ntp authentication-key 1 md5 NTPpa55
+
+<Configure routers to timestamp log messages>
+service timestamps log datetime msec
+
+<Configure Syslog Server on R3>
+logging host 192.168.1.6
+logging on
+
+------Configure R3 to support SSH------
+username SSHadmin privilege 15 secret 123
+
+<Activate Vty>
+line vty 0 5
+login local
+transport input ssh
+
+<Erase existing key pairs on R3>
+crypto key zeroize rsa
+
+<Generate the RSA encryption key pair for R3>
+crypto key generate rsa
+
+<Force user of SSHv2>
+ip ssh version 2
+
+<Configure SSH timeouts and authentication parameters>
+ip ssh time-out 90  		<by defualt 120>
+ip ssh authentication-retries 2
+
+----Configure OSPFv3 (IPv6)-----
+enable
+configure terminal
+router ospf 2
+interface S0/1/0
+ipv6 ospf 2 area 0
+exit
+interface G0/0/1
+ipv6 ospf 2 area 0
+exit
