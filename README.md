@@ -7,7 +7,7 @@ This lab involves configuring multiple Cisco routers with key functionalities li
 
 ## Topology
 The network topology includes multiple routers, switches, servers, and client devices with IPv4 and IPv6 addressing schemes. OSPF is used as the routing protocol, while Syslog and NTP ensure proper logging and time synchronization. SSH is used for secure remote access.
-![Network Topology](test.pdf)
+![Network Topology](Objectives%20and%20Addressing%20table_Mohamed_Khaled.pdf)
 
 ## Objectives
 1. Configure IPv4 and IPv6 addressing on routers and end devices.
@@ -24,7 +24,7 @@ The network topology includes multiple routers, switches, servers, and client de
 - **End Devices**: PCs connected via switches
 
 ## Configuration File
-- **Configuration file**:Find all configurations in the [Configuration File](Configuration%20File.txt).
+- **Configuration file**:Find all configurations in the [Configuration File](Configuration%20File%20(Project%2010).txt).
 
 ## Steps
 1. Configure IP addresses and OSPF routing on the routers.
